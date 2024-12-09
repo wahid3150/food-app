@@ -1,33 +1,40 @@
 const userModel = require("../models/userModel");
 const JWT = require("jsonwebtoken");
 
-module.exports = async (req, res, next) => {
+const adminMiddleware = async (req, res, next) => {
   try {
-    //Get the token from the authorization header
+    // Get the authorization header
     const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer")) {
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
         success: false,
-        message: "Unauthorized. No token provided",
-        error,
+        message: "Unauthorized. No token provided.",
       });
     }
 
-    //extract and verify the token
+    // Extract and verify the token
     const token = authHeader.split(" ")[1];
-    const decode = JWT.verify(token, process.env.JWT_SECRET);
+    let decode;
+    try {
+      decode = JWT.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid token.",
+        error: err.message,
+      });
+    }
 
-    //attach the user id to the request object
+    // Attach the user ID to the request object
     req.userId = decode.id;
+    console.log(`Decoded user ID: ${req.userId}`);
 
-    console.log(`Decoded user ID: ${req.userId}`); // Debugging log
-
-    //Check if the user exists and the userType is admin
+    // Check if the user exists and the userType is admin
     const user = await userModel.findById(req.userId);
     if (!user) {
       return res.status(404).send({
         success: false,
-        message: "user not found",
+        message: "User not found.",
       });
     }
 
@@ -40,11 +47,13 @@ module.exports = async (req, res, next) => {
     }
     next();
   } catch (error) {
-    console.error("ERROR in admin middleware", error);
+    console.error("Error in admin middleware:", error);
     res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: "Internal Server Error.",
       error: error.message,
     });
   }
 };
+
+module.exports = adminMiddleware;
