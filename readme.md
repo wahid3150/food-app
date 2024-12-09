@@ -127,4 +127,4 @@
 
 ---
 
-💼 Connect with me on [LinkedIn](https://www.linkedin.com/in/wahidanon/)!
+💼 Connect with me on [Wahid Ali](https://www.linkedin.com/in/wahidanon/)!
