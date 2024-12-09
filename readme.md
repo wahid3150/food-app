@@ -124,4 +124,7 @@
 ## Acknowledgments
 
 🙏 - Thanks to the developers of the libraries used in this project.
+
+---
+
 💼 Connect with me on [LinkedIn](https://www.linkedin.com/in/wahidanon/)!
